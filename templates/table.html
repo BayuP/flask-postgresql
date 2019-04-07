@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}User{% endblock %}
+{% block body %}
+<h1>User List</h1>
+<button type="button" class="btn btn-default btn-sm"><a href="{{ url_for('logout') }}">Log out</a></button>
+<div class="table-responsive">           
+      <table id="mytable" class="table table-bordred table-striped" style="text-align:center">
+         <thead style="text-align:center">                   
+           <th>Name</th>
+             <th>Email</th>
+             <th>Address</th>
+           </thead>
+<tbody>   
+        {% for user in users %}
+		<tr>
+			<td>{{ user.name }}</td>
+			<td>{{ user.email }}</td>
+			<td>{{ user.address }}</td>
+			<td><a class="btn btn-primary center" href="{{ url_for('edit_user', id=user.id) }}">Edit</a></td>
+			<td class="text-center">
+				<div class="row">
+					<form action="{{ url_for('users_delete') }}" method="post" class="center">
+						<input type="hidden" name="id" value="{{ user.id }}">
+						<input type="submit" class="btn btn-danger"  value="Delete">
+					</form>
+				</div>
+			</td>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+{% endblock %}
