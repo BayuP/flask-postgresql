@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}User{% endblock %}
 {% block body %}
+      <div class="container">
+      	<div class="row">
+              <div class="col-md-12">
 <h1>User List</h1>
-<button type="button" class="btn btn-default btn-sm"><a href="{{ url_for('logout') }}">Log out</a></button>
-<div class="table-responsive">           
+<button type="button" class="btn btn-default btn-sm"><a href="{{ url_for('review') }}">Create Review</a></button>
+<div class="table-responsive">
       <table id="mytable" class="table table-bordred table-striped" style="text-align:center">
-         <thead style="text-align:center">                   
+         <thead style="text-align:center">
            <th>Name</th>
              <th>Email</th>
              <th>Address</th>
            </thead>
-<tbody>   
+<tbody>
         {% for user in users %}
 		<tr>
 			<td>{{ user.name }}</td>
@@ -29,4 +32,8 @@
 	{% endfor %}
 </tbody>
 </table>
+
+</div>
+</div>
+</div>
 {% endblock %}

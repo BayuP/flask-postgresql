@@ -1,23 +1,27 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session
 from model import User, db , bcrypt , login_manager
-from form import UserForm, RegistrationForm, LoginForm
+from form import UserForm, RegistrationForm, LoginForm , ReviewForm
 from flask_login import  login_user, logout_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'this not secret'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'Use your postgres uri here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:p@ssword@localhost/flaskProject'
 login_manager.init_app(app)
 db.init_app(app)
 
 
-@app.route("/")
+@app.route("/edit")
 def users():
     if 'email' in session:
         users = User.query.order_by(User.name).all()
         return render_template('table.html', users=users)
-    return redirect(url_for('login'))
+    return redirect(url_for('dashboard'))
+
+@app.route("/")
+def dashboard():
+    return render_template('dashboard.html')
 
 @app.route("/users/delete", methods=('POST',))
 def users_delete():
@@ -33,7 +37,7 @@ def users_delete():
     return redirect(url_for('users'))
 
 @app.route("/edit_user/<id>", methods=('GET', 'POST'))
-def edit_user(id): 
+def edit_user(id):
     edit_user= User.query.filter_by(id=id).first()
     form = UserForm(obj=edit_user)
     if form.validate_on_submit():
@@ -63,6 +67,11 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+@app.route('/review')
+def review():
+    form = ReviewForm(request.form)
+    return render_template('review.html', form=form)
+
 @app.route('/login', methods=('GET','POST'))
 def login():
     form = LoginForm(request.form)
@@ -70,7 +79,6 @@ def login():
         user= User.query.filter_by(email=form.email.data).first()
         if user is not None and user.check_hash(form.password.data):
             login_user(user)
-            flash("Welcome "+user.name,"success")
             session['email']=user.email
             return redirect(url_for('users'))
         else:
@@ -81,7 +89,7 @@ def login():
 def logout():
     logout_user()
     session.pop('email',None)
-    return redirect(url_for('login'))
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.run()
